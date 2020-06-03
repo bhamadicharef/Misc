@@ -1,0 +1,90 @@
+Prior steps in having the QT GUI running under Win10 … it is not too hard but must go through
+a lot of steps in this sequence … this will be later useful for the System Integrator if they are
+not familiar with combination of Qt / OpenCV … 
+
+=============================================================================
+
+Install MinGW-w64 - for 32 and 64 bit Windows from SourceForge 
+https://sourceforge.net/projects/mingw-w64/ 
+
+All the executable should be at 
+C:\Program Files\mingw-w64\x86_64-8.1.0-win32-seh-rt_v6-rev0\mingw64\bin
+
+Get Qt 5.12.6 
+https://www.qt.io/blog/qt-5.12.6-released
+
+Archive are at 
+https://download.qt.io/archive/qt/5.12/5.12.6/  
+
+it is a 3.7 GB executable 
+https://download.qt.io/archive/qt/5.12/5.12.6/qt-opensource-windows-x86-5.12.6.exe 
+
+Download and run it … you must install it at C:\Qt 
+
+Try to launch the QT Creator IDE tool … and use the example to test the compilation
+
+=============================================================================
+
+Get opencv-4.1.1-vc14_vc15.exe from 
+https://opencv.org/opencv-4-1-1/  … “Win Pack” link
+run opencv-4.1.1-vc14_vc15.exe  and  it will create an opencv folder 
+that you need to copy to C:\opencv then you make empty folder at
+C:\opencv-build 
+
+=============================================================================
+
+Download CMake for Windows
+https://cmake.org/download/ 
+
+Windows win64-x64 Installer 
+https://github.com/Kitware/CMake/releases/download/v3.17.0-rc2/cmake-3.17.0-rc2-win64-x64.msi 
+
+We need to use CMake to compile Opencv and tells it where is Qt5 so it generate all the 
+libraries (DLLs) …
+
+I follow this webpage 
+https://wiki.qt.io/How_to_setup_Qt_and_openCV_on_Windows 
+
+You basically select both folders one for the source and the other 
+where we will build opencv from source, on the top left two buttons. 
+We need to remove some of the options and add others like Qt5_dir 
+i.e. the Qt5 directory … read the web page. Un-tick CUDA and IBB, etc
+as mentioned. 
+
+Reminder that we are using the mingw73_64 compiler tools
+When Cmake ask for Compilers C and C++ we specify native compilers
+
+Compilers C: C:\Qt\5.12.6\mingw73_64\bin\gcc.exe 
+Compilers C++: C:\Qt\5.12.6\mingw73_64\bin\g++.exe
+
+Once you clicked on “Configure” and there is nothing flagged as error in RED
+then click on “Generate” … CMake will have then created all the configuration
+files to get OpenCV compile from sources … then using a terminal / console
+
+cd C:\ 
+cd opencv-build 
+mingw32-make -j 3 
+
+This will take a while … with percentage showing the progress … if there are
+errors try again “mingw32-make -j 3” until there is no errors … sometimes 
+you may need to return to CMake and untick some of the options if it complains
+and redo “Configure” then “Generate” … then again “mingw32-make -j 3 ”
+
+then type 
+mingw32-make install
+
+Now opencv should be properly compiled on your laptop and Qt should be
+able to link to it … see project file (.PRO) in the testQT GUI archive. This is
+the archive source code of the Qt GUI …
+
+=============================================================================
+
+At the end of the process do add the following to your computer PATH variable
+
+C:\opencv-build\install\x64\mingw\bin
+C:\Qt\5.12.6\mingw73_64\bin
+
+This is important so that Qt application know where the DLLs are (release and debug)
+
+=============================================================================
+
